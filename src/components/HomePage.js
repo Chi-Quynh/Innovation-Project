@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Tabs, Tab, TextField } from '@mui/material';
+import { Link } from 'react-router-dom';
 import NavBar from './Navbar'; // Import the NavBar component
 
 // Your crypto data is here in the same file
@@ -145,8 +146,8 @@ const HomePage = () => {
                                 <TableCell>{row.change}</TableCell>
                                 <TableCell>{row.marketCap}</TableCell>
                                 <TableCell>
-                                    <Button variant="contained" color="primary">Buy</Button>
-                                    <Button variant="contained" color="secondary">Sell</Button>
+                                    <Button component={Link} to="/trade" variant="contained" color="primary">Buy</Button>
+                                    <Button component={Link} to="/trade" variant="contained" color="secondary">Sell</Button>
                                 </TableCell>
                             </TableRow>
                         ))}

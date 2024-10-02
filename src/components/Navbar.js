@@ -13,7 +13,7 @@ const NavBar = () => {
             <Toolbar>
                 <Box display="flex" alignItems="center">
                     <Avatar src={logo} style={{ width: 56, height: 56 }} />
-                    <Button color="inherit" component={Link} to="/">Buy Crypto</Button>
+                    <Button color="inherit" component={Link} to="/trade">Trade</Button>
                 </Box>
                 <Typography className="logo" variant="h6" style={{ flexGrow: 1 }}>
                 </Typography>
