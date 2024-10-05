@@ -146,8 +146,7 @@ const HomePage = () => {
                                 <TableCell>{row.change}</TableCell>
                                 <TableCell>{row.marketCap}</TableCell>
                                 <TableCell>
-                                    <Button component={Link} to="/trade" variant="contained" color="primary">Buy</Button>
-                                    <Button component={Link} to="/trade" variant="contained" color="secondary">Sell</Button>
+                                    <Button component={Link} to="/trade" variant="contained" color="primary">Trade</Button>
                                 </TableCell>
                             </TableRow>
                         ))}
