@@ -127,34 +127,46 @@ const HomePage = () => {
                 />
             </Box>
 
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Price</TableCell>
-                            <TableCell>24h Change</TableCell>
-                            <TableCell>Market Cap</TableCell>
-                            <TableCell>Action</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredAssets.map((row) => (
-                            <TableRow key={row.name}>
-                                <TableCell>{row.name}</TableCell>
-                                <TableCell>{row.price}</TableCell>
-                                <TableCell>{row.change}</TableCell>
-                                <TableCell>{row.marketCap}</TableCell>
-                                <TableCell>
-                                    <Button component={Link} to="/trade" variant="contained" color="primary">Trade</Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </>
-    );
+      <TableContainer
+        component={Paper}
+        sx={{ maxWidth: "70%", margin: "auto", marginTop: "20px" }}
+      >
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>24h Change</TableCell>
+              <TableCell>Market Cap</TableCell>
+              <TableCell>Action</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredAssets.map((row) => (
+              <TableRow key={row.name}>
+                <TableCell>{row.name}</TableCell>
+                <TableCell>{row.price}</TableCell>
+                <TableCell>{row.change}</TableCell>
+                <TableCell>{row.marketCap}</TableCell>
+                <TableCell>
+                  <Button
+                    component={Link}
+                    to="/trade"
+                    variant="contained"
+                    color="primary"
+                    size="medium"
+                    sx={{ margin: "10px" }}
+                  >
+                    Trade
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
+  );
 };
 
 export default HomePage;
