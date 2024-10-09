@@ -12,6 +12,7 @@ import {
   Tabs,
   Tab,
   TextField,
+  Grid2,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import NavBar from "./Navbar"; // Import the NavBar component
@@ -24,6 +25,7 @@ const data = [
     change: "+2%",
     marketCap: "$800B",
     category: "Layer 1",
+    image: "https://cryptologos.cc/logos/bitcoin-btc-logo.png", // Correct image URL for Bitcoin
   },
   {
     name: "Ethereum",
@@ -31,6 +33,7 @@ const data = [
     change: "-1%",
     marketCap: "$350B",
     category: "Layer 2",
+    image: "https://cryptologos.cc/logos/ethereum-eth-logo.png", // Correct image URL for Ethereum
   },
   {
     name: "Solana",
@@ -38,6 +41,7 @@ const data = [
     change: "+5%",
     marketCap: "$45B",
     category: "Layer 1",
+    image: "https://cryptologos.cc/logos/solana-sol-logo.png", // Correct image URL for Solana
   },
   {
     name: "Polkadot",
@@ -45,6 +49,7 @@ const data = [
     change: "-3%",
     marketCap: "$30B",
     category: "Layer 0",
+    image: "https://cryptologos.cc/logos/polkadot-new-dot-logo.png?v=022", // Polkadot Logo
   },
   {
     name: "Chainlink",
@@ -52,6 +57,7 @@ const data = [
     change: "+1%",
     marketCap: "$10B",
     category: "Oracles",
+    image: "https://cryptologos.cc/logos/chainlink-link-logo.png?v=022", // Chainlink Logo
   },
   {
     name: "Avalanche",
@@ -59,6 +65,7 @@ const data = [
     change: "+7%",
     marketCap: "$20B",
     category: "Layer 1",
+    image: "https://cryptologos.cc/logos/avalanche-avax-logo.png?v=022", // Avalanche Logo
   },
   {
     name: "Uniswap",
@@ -66,6 +73,7 @@ const data = [
     change: "-4%",
     marketCap: "$15B",
     category: "DeFi",
+    image: "https://cryptologos.cc/logos/uniswap-uni-logo.png?v=022", // Uniswap Logo
   },
   {
     name: "Aave",
@@ -73,6 +81,7 @@ const data = [
     change: "+3%",
     marketCap: "$5B",
     category: "DeFi",
+    image: "https://cryptologos.cc/logos/aave-aave-logo.png?v=022", // Aave Logo
   },
   {
     name: "Polygon",
@@ -80,6 +89,7 @@ const data = [
     change: "+8%",
     marketCap: "$12B",
     category: "Layer 2",
+    image: "https://cryptologos.cc/logos/polygon-matic-logo.png?v=022", // Polygon (Matic) Logo
   },
   {
     name: "Cosmos",
@@ -87,28 +97,28 @@ const data = [
     change: "-2%",
     marketCap: "$8B",
     category: "Interoperability",
+    image: "https://cryptologos.cc/logos/cosmos-atom-logo.png?v=022", // Cosmos Logo
   },
+  // Add more assets with their images...
 ];
 
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [assetCategory, setAssetCategory] = useState(""); // to set category for filtering digital assets
+  const [assetCategory, setAssetCategory] = useState("");
   const [filteredAssets, setFilteredAssets] = useState(data);
 
   const handleSearch = (value) => {
-    setSearchTerm(value); // from e.target.value in onChange in TextField
+    setSearchTerm(value);
     const results = filterAssets(value, assetCategory);
     setFilteredAssets(results);
   };
 
-  // Handle tab change for category filtering
   const handleTabChange = (event, newValue) => {
     setAssetCategory(newValue);
     const results = filterAssets(searchTerm, newValue);
     setFilteredAssets(results);
   };
 
-  // Asset filtering based on search and category
   const filterAssets = (searchTerm, assetCategory) => {
     return data.filter(
       (asset) =>
@@ -119,36 +129,76 @@ const HomePage = () => {
 
   return (
     <>
-      {/* Reuse the NavBar component */}
       <NavBar />
 
-      <Box className="search-bar">
-        <div>
-          <Tabs value={assetCategory} onChange={handleTabChange}>
-            <Tab label="All" value="" />
-            <Tab label="Layer 0" value="Layer 0" />
-            <Tab label="Layer 1" value="Layer 1" />
-            <Tab label="Layer 2" value="Layer 2" />
-            <Tab label="Oracles" value="Oracles" />
-            <Tab label="DeFi" value="DeFi" />
-            <Tab label="Interoperability" value="Interoperability" />
-          </Tabs>
-        </div>
-        <div>
-          <TextField
-            sx={{ width: "300px" }}
-            label="Search"
-            variant="outlined"
-            size="small"
-            value={searchTerm}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
-        </div>
+      <Box
+        sx={{
+          marginTop: "20px",
+          maxWidth: "70%",
+          margin: "auto",
+          paddingTop: "10px",
+        }}
+      >
+        <Grid2 container spacing={2} alignItems="center">
+          <Grid2 item xs={12} sm={6}>
+            <Tabs
+              value={assetCategory}
+              onChange={handleTabChange}
+              TabIndicatorProps={{ style: { display: "none" } }}
+              sx={{
+                "& .MuiTab-root": {
+                  margin: "0 10px",
+                  padding: "10px 20px",
+                  borderRadius: "25px",
+                  textTransform: "none",
+                  backgroundColor: "#f0f0f0",
+                  color: "#000",
+                  transition: "background-color 0.3s ease",
+                  "&:hover": {
+                    backgroundColor: "#ddd",
+                  },
+                  "&.Mui-selected": {
+                    backgroundColor: "#6f3bff",
+                    color: "#fff",
+                  },
+                },
+              }}
+            >
+              <Tab label="All" value="" />
+              <Tab label="Oracles" value="Oracles" />
+              <Tab label="DeFi" value="DeFi" />
+              <Tab label="Interoperability" value="Interoperability" />
+            </Tabs>
+          </Grid2>
+
+          <Grid2 item xs={12} sm={6}>
+            <TextField
+              label="Search"
+              value={searchTerm}
+              onChange={(e) => handleSearch(e.target.value)}
+              sx={{
+                width: "30em",
+                height: "70%",
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "25px",
+                },
+                "& .MuiInputLabel-root": {
+                  color: "grey",
+                  fontSize: "17px",
+                },
+              }}
+            />
+          </Grid2>
+        </Grid2>
       </Box>
 
       <TableContainer
         component={Paper}
-        sx={{ maxWidth: "70%", margin: "auto", marginTop: "20px" }}
+        sx={{
+          maxWidth: "50%",
+          margin: "auto",
+          marginTop: "20px",
+        }}
       >
         <Table>
           <TableHead>
@@ -163,19 +213,32 @@ const HomePage = () => {
           <TableBody>
             {filteredAssets.map((row) => (
               <TableRow key={row.name}>
-                <TableCell>{row.name}</TableCell>
+                <TableCell>
+                  {/* Image + Name */}
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <img
+                      src={row.image}
+                      alt={row.name}
+                      style={{
+                        width: "30px",
+                        height: "30px",
+
+                        objectFit: "contain", // Ensures the image fits the container properly
+                        marginRight: "10px",
+                      }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://via.placeholder.com/30"; // Fallback image if the URL is broken
+                      }}
+                    />
+                    <Box style={{ marginLeft: "2em" }}>{row.name}</Box>
+                  </Box>
+                </TableCell>
                 <TableCell>{row.price}</TableCell>
                 <TableCell>{row.change}</TableCell>
                 <TableCell>{row.marketCap}</TableCell>
                 <TableCell>
-                  <Button
-                    component={Link}
-                    to="/trade"
-                    variant="contained"
-                    color="primary"
-                    size="medium"
-                    sx={{ margin: "10px" }}
-                  >
+                  <Button component={Link} to="/trade" variant="contained">
                     Trade
                   </Button>
                 </TableCell>
