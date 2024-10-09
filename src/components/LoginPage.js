@@ -2,20 +2,22 @@ import React, { useState } from 'react';
 import { TextField, Button, Typography, Box, Link as MuiLink } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import NavBar from '../components/Navbar';
+import NavBar from '../components/Navbar';  // Ensure you're using the correct NavBar path
 
 const LoginPage = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');  // Use email instead of username
     const [password, setPassword] = useState('');
-    const { login } = useAuth();
+    const { login, error } = useAuth();  // Access the login and error state from AuthContext
     const navigate = useNavigate();
 
     const handleLogin = (e) => {
         e.preventDefault();
-        if (login(username, password)) {
-            navigate('/'); // Redirect to homepage on successful login
+        const success = login(email, password);  // Try logging in with email and password
+
+        if (success) {
+            navigate('/');  // Redirect to homepage on successful login
         } else {
-            alert('Invalid credentials');
+            alert(error || 'Invalid credentials');  // Show the error from context or a default message
         }
     };
 
@@ -28,16 +30,17 @@ const LoginPage = () => {
                 alignItems="center" 
                 justifyContent="center" 
                 height="80vh"
-                sx={{ backgroundColor: '#f5f5f5' }} // Light background color
+                sx={{ backgroundColor: '#f5f5f5' }} 
             >
                 <Typography variant="h4" gutterBottom>Login to Your Account</Typography>
                 <Box component="form" onSubmit={handleLogin} width="300px" display="flex" flexDirection="column">
-                    <Typography align="left" gutterBottom>Gmail</Typography>
+                    {/* Email input instead of username */}
+                    <Typography align="left" gutterBottom>Email</Typography>
                     <TextField
                         variant="outlined"
                         size="small"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                     />
                     
@@ -60,7 +63,14 @@ const LoginPage = () => {
                         Login
                     </Button>
                 </Box>
-                
+
+                {/* Conditional error message based on the AuthContext */}
+                {error && (
+                    <Typography color="error" sx={{ mt: 2 }}>
+                        {error}
+                    </Typography>
+                )}
+
                 <Typography sx={{ mt: 2 }}>
                     Don't have an account? 
                     <MuiLink component={Link} to="/signup" underline="hover" sx={{ ml: 1 }}>
