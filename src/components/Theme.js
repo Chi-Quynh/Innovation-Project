@@ -7,14 +7,10 @@ const theme = createTheme({
       main: "#6f3bff", // The purple color for buttons and header
     },
     secondary: {
-      main: "#1976d2",
+      main: "#1976d2", //blue color
     },
     light: {
-      main: "#faf8f7", // The light grey background
-    },
-    background: {
-      default: "#f0edf9", // The light grey background
-      paper: "#ffffff", // White containers
+      main: "#faf8f7", // Light background color
     },
     text: {
       primary: "#000000", // Black text for headers
@@ -24,8 +20,8 @@ const theme = createTheme({
   typography: {
     fontFamily: "Roboto, sans-serif",
     h1: {
-      fontSize: "2rem",
-      fontWeight: 700, // Bold header
+      fontSize: "3rem",
+      fontWeight: 600, // Bold header
     },
     h2: {
       fontSize: "1.5rem",
@@ -35,6 +31,7 @@ const theme = createTheme({
       fontSize: "1.2rem",
       fontWeight: 500,
     },
+
     body1: {
       fontSize: "1rem",
       fontWeight: 400,
@@ -66,6 +63,13 @@ const theme = createTheme({
             color: "#faf8f7",
           },
         },
+        containedLight: {
+          backgroundColor: "#faf8f7",
+          color: "#303030",
+          "&:hover": {
+            backgroundColor: "#5e32e6",
+          },
+        },
         transition: "background-color 0.8s ease", // Smooth transition
         "&:hover": {
           backgroundColor: "#ddd", // Background on hover
@@ -76,11 +80,14 @@ const theme = createTheme({
         },
       },
     },
-    MuiCard: {
+    MuiInputLabel: {
       styleOverrides: {
         root: {
-          borderRadius: "25px", // Rounded corners for cards
-          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Soft shadow
+          fontSize: "0.875rem", // Adjust the font size (e.g., 14px)
+          color: "#757575", // Use grey color for the label text
+          "&.Mui-focused": {
+            color: "#757575", // Keep the label grey when focused
+          },
         },
       },
     },

@@ -34,23 +34,26 @@ const NavBar = () => {
             Trade
           </Button>
         </Box>
+
         {user ? (
           <>
-            <Avatar
-              alt={user.username}
-              sx={{
-                width: 35,
-                height: 35,
-                marginRight: 2,
-                backgroundColor: "#fff",
-                color: "#6f3bff",
-              }}
-            >
-              {user.username.charAt(0).toUpperCase()}
-            </Avatar>
-            <Button color="inherit" onClick={logout}>
-              Logout
-            </Button>
+            <Box display="flex" alignItems="center">
+              <Avatar
+                alt={user.username}
+                sx={{
+                  width: 35,
+                  height: 35,
+                  marginRight: 2,
+                  backgroundColor: "#fff",
+                  color: "#6f3bff",
+                }}
+              >
+                {user.username.charAt(0).toUpperCase()}
+              </Avatar>
+              <Button color="inherit" onClick={logout}>
+                Logout
+              </Button>
+            </Box>
           </>
         ) : (
           <Box display="flex" alignItems="center">

@@ -18,3 +18,52 @@
 .trade-box {
   width: 15em;
 }
+
+.account-sign {
+  display: grid;
+  grid-template-columns: 1fr; /* 1 column grid */
+  gap: 1rem; /* Space between each element */
+  padding: 0.5rem; /* Adds some padding inside the box */
+  width: 20em;
+
+  margin: 10em;
+  background-color: #ffffff; /* Adds a background color */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+  border-radius: 8px; /* Rounded corners */
+}
+
+.account-container {
+  display: flex;
+  height: 100vh;
+}
+
+.account-img {
+  object-fit: cover;
+  object-position: left;
+  overflow: hidden;
+}
+
+.buy-sell-container {
+  display: flex;
+  margin-top: 5%;
+  margin-inline: 10% 10%;
+  justify-content: space-around;
+  align-items: center;
+}
+.buy-sell-box {
+  width: 20em;
+  padding: 20px;
+  border-radius: 8px; /* Adjusts the border radius for rounded corners */
+  border: 2px solid #9277dc; /* Thin grey solid border */
+  padding: 2rem; /* Optional: adds some padding inside the Box */
+}
+
+.buy-sell-button {
+  padding: 2rem;
+}
+
+.buy-sell-grid {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 1rem;
+}
