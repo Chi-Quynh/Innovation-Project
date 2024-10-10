@@ -3,7 +3,6 @@ import { TextField, Button, Typography, Box, Link as MuiLink } from '@mui/materi
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import NavBar from '../components/Navbar';
-import Footer from "./Footer";
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
@@ -69,7 +68,6 @@ const LoginPage = () => {
                     </MuiLink>
                 </Typography>
             </Box>
-            <Footer/>
         </>
     );
 };

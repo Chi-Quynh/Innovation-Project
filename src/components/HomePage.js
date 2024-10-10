@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import NavBar from "./Navbar"; // Import the NavBar component
-import Footer from "./Footer"
 
 // Your crypto data is here in the same file
 const data = [
@@ -185,7 +184,6 @@ const HomePage = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Footer/>
     </>
   );
 };
