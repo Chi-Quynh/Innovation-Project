@@ -28,8 +28,6 @@
 
   margin: 10em;
   background-color: #ffffff; /* Adds a background color */
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
-  border-radius: 8px; /* Rounded corners */
 }
 
 .account-container {
