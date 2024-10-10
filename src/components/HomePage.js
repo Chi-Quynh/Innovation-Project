@@ -176,9 +176,10 @@ const HomePage = () => {
               label="Search"
               value={searchTerm}
               onChange={(e) => handleSearch(e.target.value)}
+              size="small"
               sx={{
                 width: "30em",
-                height: "70%",
+
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "25px",
                 },
@@ -235,10 +236,26 @@ const HomePage = () => {
                   </Box>
                 </TableCell>
                 <TableCell>{row.price}</TableCell>
-                <TableCell>{row.change}</TableCell>
+                <TableCell
+                  sx={{
+                    color: row.change.startsWith("+")
+                      ? "green"
+                      : row.change.startsWith("-")
+                      ? "red"
+                      : "black",
+                  }}
+                >
+                  {row.change}
+                </TableCell>
                 <TableCell>{row.marketCap}</TableCell>
                 <TableCell>
-                  <Button component={Link} to="/trade" variant="contained">
+                  <Button
+                    component={Link}
+                    to="/trade"
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                  >
                     Trade
                   </Button>
                 </TableCell>

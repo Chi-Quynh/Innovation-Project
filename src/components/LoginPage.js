@@ -9,43 +9,33 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import NavBar from "../components/Navbar";
+import SignupImg from "../images/2363386.jpg"; //Import image from the images folder
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState(""); // Use email instead of username
   const [password, setPassword] = useState("");
-  const { login } = useAuth();
+  const { login, error } = useAuth(); // Access the login and error state from AuthContext
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (login(username, password)) {
+    const success = login(email, password); // Try logging in with email and password
+
+    if (success) {
       navigate("/"); // Redirect to homepage on successful login
     } else {
-      alert("Invalid credentials");
+      alert(error || "Invalid credentials"); // Show the error from context or a default message
     }
   };
 
   return (
     <>
       <NavBar />
-      <Box
-        sx={{
-          display: "flex",
-          width: "100%", // Ensures the container takes the full width of its parent
-          height: "100vh", // Adjust the height as needed
-        }}
-      >
+      <Box className="account-container">
         {/* Image Box */}
-        <Box
-          sx={{
-            display: "flex",
-            width: "500px", // Ensures the Box takes full width of its parent
-            height: "100%", // Set a specific height or make it responsive as needed
-            overflow: "hidden", // Ensures no part of the image spills outside the container
-          }}
-        >
+        <Box className="account-img">
           <img
-            src="https://crypto.news/app/uploads/2024/02/crypto-news-dollar-option03.webp"
+            src={SignupImg}
             alt="BitCoinLoginPage"
             style={{
               width: "100%", // Makes the image take up 100% of the box's width
@@ -54,84 +44,61 @@ const LoginPage = () => {
               objectPosition: "left", // Focus on the right part of the image
             }}
           />
-          <Box
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              marginTop: "6vh",
-              width: "500px", // Ensures the Box takes full width of its parent
-              height: "100%",
-              backgroundColor: "rgba(211, 226, 241, 0.75))", // Adjust opacity for darker or lighter effect
-            }}
-          ></Box>
         </Box>
 
         {/* Login Form Box */}
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ backgroundColor: "#f5f5f5", width: "70vh", padding: 3 }} // Light background color, padding for internal spacing
-        >
+        <Box className="account-sign">
           <Typography variant="h4" gutterBottom>
-            Login to Your Account
+            Welcome back
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleLogin}
-            sx={{
-              width: 300, // Fixed width for the form
-              display: "flex",
-              flexDirection: "column",
-              mt: 2, // Margin top for spacing from the header
-            }}
-          >
-            <Typography align="left" gutterBottom>
-              Gmail
-            </Typography>
-            <TextField
-              variant="outlined"
-              size="small"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
 
-            <Typography align="left" gutterBottom>
-              Password
-            </Typography>
-            <TextField
-              variant="outlined"
-              size="small"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+          {/* Email input instead of username */}
 
+          <TextField
+            label="Email"
+            variant="outlined"
+            size="small"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <TextField
+            label="Password"
+            variant="outlined"
+            size="small"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Box>
             <Button
+              fullWidth
               type="submit"
               variant="contained"
-              color="primary"
-              sx={{ mt: 2 }} // Margin top for the button
+              onClick={handleLogin}
             >
               Login
             </Button>
           </Box>
 
+          {/* Conditional error message based on the AuthContext */}
+          {error && (
+            <Typography color="error" sx={{ mt: 2 }}>
+              {error}
+            </Typography>
+          )}
+
           <Typography sx={{ mt: 2 }}>
-            Don't have an account?
+            Returning user?
             <MuiLink
               component={Link}
               to="/signup"
               underline="hover"
-              sx={{ ml: 1 }} // Margin left for a little space
+              sx={{ ml: 1 }}
             >
-              Sign up
+              Login
             </MuiLink>
           </Typography>
         </Box>
