@@ -11,6 +11,7 @@ import { useAuth } from "../context/AuthContext";
 import NavBar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import SignupImg from "../images/2363386.jpg"; // Import image from the images folder
+import Footer from "./Footer"
 
 const Signup = () => {
   const { signup } = useAuth(); // Using the signup function from AuthContext
@@ -138,6 +139,7 @@ const Signup = () => {
           {/* Display success message */}
         </Box>
       </Box>
+      <Footer />
     </>
   );
 };

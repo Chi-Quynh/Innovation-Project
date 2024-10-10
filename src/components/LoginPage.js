@@ -9,7 +9,8 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import NavBar from "../components/Navbar";
-import SignupImg from "../images/2363386.jpg"; //Import image from the images folder
+import SignupImg from "../images/2363386.jpg"; //Import image from the images 
+import Footer from "./Footer"
 
 const LoginPage = () => {
   const [email, setEmail] = useState(""); // Use email instead of username
@@ -103,6 +104,7 @@ const LoginPage = () => {
           </Typography>
         </Box>
       </Box>
+      <Footer />
     </>
   );
 };

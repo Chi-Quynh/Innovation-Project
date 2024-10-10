@@ -2,7 +2,7 @@ import React from "react";
 import { AppBar, Toolbar, Button, Avatar, Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import logo from "../images/Crypto.png"; // Ensure this path is correct for your logo
+import logo from "../images/crypto.png"; // Ensure this path is correct for your logo
 
 const NavBar = () => {
   const { user, logout } = useAuth();

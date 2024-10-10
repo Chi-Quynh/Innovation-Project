@@ -20,6 +20,8 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import Footer from "./Footer";
+import { useAuth } from '../context/AuthContext'; // Import the useAuth hook
 
 //Data for the coins
 export const coinOptions = [
@@ -128,6 +130,9 @@ const TradingPage = () => {
   const buyTotalPrice = buyCoinAmount * buyCoinPrice;
   const sellTotalPrice = sellCoinAmount * sellCoinPrice;
 
+  // Auth context to check if the user is logged in
+  const { user } = useAuth(); // Destructure the user from the AuthContext 
+
   // Handlers for Buy Section Slider
   const handleBuySliderChange = (event, newValue) => {
     setBuyCoinAmount(newValue);
@@ -185,43 +190,45 @@ const TradingPage = () => {
   // Snackbar state for popup
   const [popup, setPopup] = useState({ open: false, message: "", type: "" });
 
-  // Handle Buy Button Click
-  const handleBuyClick = () => {
-    // Close the popup first if already open, then trigger a new one
-    setPopup({ open: false, message: "", type: "" });
-    if (validateBuyForm()) {
-      setTimeout(() => {
-        setPopup({ open: true, message: "Purchased", type: "success" });
-      }, 0);
-    } else {
-      setTimeout(() => {
-        setPopup({
-          open: true,
-          message: "Error: Select a coin and enter a valid price!",
-          type: "error",
-        });
-      }, 0);
-    }
-  };
+    // Handle Buy Button Click
+    const handleBuyClick = () => {
+        // Close the popup first if already open, then trigger a new one
+        if (!user) { // If the user is not logged in
+            setTimeout(() => {
+                setPopup({ open: true, message: 'Error: You must log in first!', type: 'error' });
+            }, 0);     
+        }
+        else if (validateBuyForm()) {
+            setTimeout(() => {
+                setPopup({ open: true, message: 'Purchased', type: 'success' });
+            }, 0);            
+        } else {
+            setTimeout(() => {
+                setPopup({ open: true, message: 'Error: Select a coin and enter a valid price!', type: 'error' });
+            }, 0);  
+        }
+    };
 
-  // Handle Sell Button Click
-  const handleSellClick = () => {
-    // Close the popup first if already open, then trigger a new one
-    setPopup({ open: false, message: "", type: "" });
-    if (validateSellForm()) {
-      setTimeout(() => {
-        setPopup({ open: true, message: "Sold", type: "success" });
-      }, 0);
-    } else {
-      setTimeout(() => {
-        setPopup({
-          open: true,
-          message: "Error: Select a coin and enter a valid price!",
-          type: "error",
-        });
-      }, 0);
-    }
-  };
+    // Handle Sell Button Click
+    const handleSellClick = () => {
+        // Close the popup first if already open, then trigger a new one
+        setPopup({ open: false, message: '', type: '' });
+
+        if (!user) { // If the user is not logged in
+            setTimeout(() => {
+                setPopup({ open: true, message: 'Error: You must log in first!', type: 'error' });
+            }, 0);     
+        }
+        else if (validateSellForm()) {
+            setTimeout(() => {
+                setPopup({ open: true, message: 'Sold', type: 'success' });
+            }, 0);
+        } else {
+            setTimeout(() => {
+                setPopup({ open: true, message: 'Error: Select a coin and enter a valid price!', type: 'error' });
+            }, 0);        
+        }
+    };
 
   // Close Snackbar
   const handleClosePopup = () => {
@@ -315,6 +322,7 @@ const TradingPage = () => {
             fullWidth
             margin="normal"
             InputProps={{
+				readOnly: true,
               inputProps: {
                 min: 0,
                 step: 0.001,
@@ -398,6 +406,7 @@ const TradingPage = () => {
             fullWidth
             margin="normal"
             InputProps={{
+				readOnly: true,
               inputProps: {
                 min: 0,
                 step: 0.001,
@@ -506,6 +515,7 @@ const TradingPage = () => {
           </Table>
         </TableContainer>
       </Box>
+      <Footer />
     </>
   );
 };
