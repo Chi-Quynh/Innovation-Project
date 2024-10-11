@@ -352,7 +352,7 @@ const TradingPage = () => {
             margin="normal"
             InputProps={{
               readOnly: true, // Making the field read-only
-              endAdornment: <InputAdornment position="end">BTC</InputAdornment>,
+              endAdornment: <InputAdornment position="end">USD</InputAdornment>,
             }}
           />
           <Box className="buy-sell-button">
@@ -436,7 +436,7 @@ const TradingPage = () => {
             margin="normal"
             InputProps={{
               readOnly: true, // Making the field read-only
-              endAdornment: <InputAdornment position="end">BTC</InputAdornment>,
+              endAdornment: <InputAdornment position="end">USD</InputAdornment>,
             }}
           />
           <Box className="buy-sell-button">
