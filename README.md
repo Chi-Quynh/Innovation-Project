@@ -51,7 +51,4 @@ Our team decided to work in sprints of 7 days with weekly meetings:
 - **d. Documentation**:  
   Google Drive for storing and organizing project documentation. Further formatted using word.
 
-### User Experience
-- Use case Diagram
-- User flow Diagram
-- Wireframe
+# Visit the wiki for more!
