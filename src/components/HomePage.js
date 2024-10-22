@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import {
   Table,
   TableBody,
@@ -17,96 +17,24 @@ import {
 import { Link } from "react-router-dom";
 import NavBar from "./Navbar"; // Import the NavBar component
 import Footer from "./Footer"
-
-// Your crypto data is here in the same file
-const data = [
-  {
-    name: "Bitcoin",
-    price: "$44,000",
-    change: "+2%",
-    marketCap: "$800B",
-    category: "Layer 1",
-    image: "https://cryptologos.cc/logos/bitcoin-btc-logo.png", // Correct image URL for Bitcoin
-  },
-  {
-    name: "Ethereum",
-    price: "$3,000",
-    change: "-1%",
-    marketCap: "$350B",
-    category: "Layer 2",
-    image: "https://cryptologos.cc/logos/ethereum-eth-logo.png", // Correct image URL for Ethereum
-  },
-  {
-    name: "Solana",
-    price: "$150",
-    change: "+5%",
-    marketCap: "$45B",
-    category: "Layer 1",
-    image: "https://cryptologos.cc/logos/solana-sol-logo.png", // Correct image URL for Solana
-  },
-  {
-    name: "Polkadot",
-    price: "$28",
-    change: "-3%",
-    marketCap: "$30B",
-    category: "Layer 0",
-    image: "https://cryptologos.cc/logos/polkadot-new-dot-logo.png?v=022", // Polkadot Logo
-  },
-  {
-    name: "Chainlink",
-    price: "$24",
-    change: "+1%",
-    marketCap: "$10B",
-    category: "Oracles",
-    image: "https://cryptologos.cc/logos/chainlink-link-logo.png?v=022", // Chainlink Logo
-  },
-  {
-    name: "Avalanche",
-    price: "$65",
-    change: "+7%",
-    marketCap: "$20B",
-    category: "Layer 1",
-    image: "https://cryptologos.cc/logos/avalanche-avax-logo.png?v=022", // Avalanche Logo
-  },
-  {
-    name: "Uniswap",
-    price: "$25",
-    change: "-4%",
-    marketCap: "$15B",
-    category: "DeFi",
-    image: "https://cryptologos.cc/logos/uniswap-uni-logo.png?v=022", // Uniswap Logo
-  },
-  {
-    name: "Aave",
-    price: "$320",
-    change: "+3%",
-    marketCap: "$5B",
-    category: "DeFi",
-    image: "https://cryptologos.cc/logos/aave-aave-logo.png?v=022", // Aave Logo
-  },
-  {
-    name: "Polygon",
-    price: "$1.50",
-    change: "+8%",
-    marketCap: "$12B",
-    category: "Layer 2",
-    image: "https://cryptologos.cc/logos/polygon-matic-logo.png?v=022", // Polygon (Matic) Logo
-  },
-  {
-    name: "Cosmos",
-    price: "$35",
-    change: "-2%",
-    marketCap: "$8B",
-    category: "Interoperability",
-    image: "https://cryptologos.cc/logos/cosmos-atom-logo.png?v=022", // Cosmos Logo
-  },
-  // Add more assets with their images...
-];
+import { fetchTokens } from '../database/SupabaseTokenAPI'; // Adjust the path if necessary
 
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [assetCategory, setAssetCategory] = useState("");
-  const [filteredAssets, setFilteredAssets] = useState(data);
+  const [filteredAssets, setFilteredAssets] = useState([]);
+  const [allAssets, setAllAssets] = useState([]); // State to hold the fetched tokens
+
+  // Fetch the data from Supabase when the component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+      const tokens = await fetchTokens(); // Fetch tokens from Supabase
+      setAllAssets(tokens || []); // Set the fetched tokens to state
+      setFilteredAssets(tokens || []); // Initially set the filteredAssets to all tokens
+    };
+
+    fetchData(); // Call the fetch function
+  }, []);
 
   const handleSearch = (value) => {
     setSearchTerm(value);
@@ -121,11 +49,21 @@ const HomePage = () => {
   };
 
   const filterAssets = (searchTerm, assetCategory) => {
-    return data.filter(
+    return allAssets.filter(
       (asset) =>
-        asset.category.toLowerCase().includes(assetCategory.toLowerCase()) &&
-        asset.name.toLowerCase().includes(searchTerm.toLowerCase())
+        asset.token_category.toLowerCase().includes(assetCategory.toLowerCase()) &&
+        asset.token_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+  };
+
+  const formatMarketCap = (value) => {
+    if (value >= 1e9) {
+      return `$${(value / 1e9).toFixed(0)}B`; // Format as billions
+    } else if (value >= 1e6) {
+      return `$${(value / 1e6).toFixed(1)}M`; // Format as millions
+    } else {
+      return `$${value}`; // Default format
+    }
   };
 
   return (
@@ -215,55 +153,52 @@ const HomePage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredAssets.map((row) => (
-                <TableRow key={row.name}>
-                  <TableCell>
-                    {/* Image + Name */}
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <img
-                        src={row.image}
-                        alt={row.name}
-                        style={{
-                          width: "30px",
-                          height: "30px",
-
-                          objectFit: "contain", // Ensures the image fits the container properly
-                          marginRight: "10px",
-                        }}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "https://via.placeholder.com/30"; // Fallback image if the URL is broken
-                        }}
-                      />
-                      <Box style={{ marginLeft: "2em" }}>{row.name}</Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>{row.price}</TableCell>
-                  <TableCell
-                    sx={{
-                      color: row.change.startsWith("+")
-                        ? "green"
-                        : row.change.startsWith("-")
-                        ? "red"
-                        : "black",
-                    }}
-                  >
-                    {row.change}
-                  </TableCell>
-                  <TableCell>{row.marketCap}</TableCell>
-                  <TableCell>
-                    <Button
-                      component={Link}
-                      to="/trade"
-                      variant="contained"
-                      color="primary"
-                      size="small"
+              {filteredAssets.length > 0 ? (
+                filteredAssets.map((row) => (
+                  <TableRow key={row.token_name}>
+                    <TableCell>
+                      {/* Image + Name */}
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <img
+                          src={row.token_image}
+                          alt={row.token_name}
+                          style={{
+                            width: "30px",
+                            height: "30px",
+                            objectFit: "contain",
+                            marginRight: "10px",
+                          }}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://via.placeholder.com/30"; // Fallback image if the URL is broken
+                          }}
+                        />
+                        <Box style={{ marginLeft: "2em" }}>{row.token_name}</Box>
+                      </Box>
+                    </TableCell>
+                    <TableCell>${row.token_price}</TableCell>
+                    <TableCell
+                      sx={{
+                        color: row.token_day_change >= 0 ? "green" : "red",
+                      }}
                     >
-                      Trade
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+                      {row.token_day_change >= 0 ? `+${row.token_day_change}` : row.token_day_change}%
+                    </TableCell>
+                    <TableCell>{formatMarketCap(row.token_market_cap)}</TableCell>
+                    <TableCell>
+                      <Button
+                        component={Link}
+                        to="/trade"
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                      >
+                        Trade
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ): null}
             </TableBody>
           </Table>
         </TableContainer>
