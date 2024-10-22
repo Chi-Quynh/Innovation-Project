@@ -1,54 +1,70 @@
-## Project Background and Introduction
+# Getting Started with Create React App
 
-### a. Introduction:
-The Decentralized Trading System aims to provide a secure and user-friendly platform for peer-to-peer trading of digital assets without the need for intermediaries.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-### b. Domain Knowledge:
-The project focuses on the cryptocurrency and blockchain domain, providing users with the ability to trade, monitor, and analyze various digital assets. This requires a foundational understanding of blockchain technology, cryptocurrency markets, and the factors influencing asset performance.
+## Available Scripts
 
-### c. Scope
-This project aims to meet the basic requirements with a user-friendly design. While the UI is kept simple, there is a significant emphasis on providing user experience (UX) through easy navigation and interaction.
+In the project directory, you can run:
 
-### d. Goals
-- **Team Collaboration**: Learning from each other, enhancing technical knowledge, and working as a cohesive unit.
-- **Technology Mastery**: Gain proficiency in utilizing modern front-end frameworks and tools, especially those related to React and its ecosystem.
+### `npm start`
 
-## Team Report
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-### Team Members and Roles
-- **Dang Quynh Chi [ID: 103805253]**  
-  Responsibilities: Managed tasks, led team meetings, designed wireframes, adjusted UI props, and gathered feedback from mentors.
-- **Le Huu Nhan [ID: 104171133]**  
-  Strengths: Proactive and diligent worker, actively participated in discussions, and contributed to coding tasks.
-- **Pham Quang Khai [ID: 104176358]**  
-  Strengths: Fast learner, always submitting work before deadline and contributed significantly to coding tasks.
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-### Table of Contribution
-| Group member | Tasks                         | Contribution | Quality of work | Timeliness | Collaboration |
-|--------------|-------------------------------|--------------|-----------------|------------|---------------|
-| Nhan         | Documentation, Tradingpage.js, Footer.js  | 10/10         | 10/10         | 10/10      | 10/10         |
-| Chi          | Documentation, Wireframe design, Theme.js + sx props for all pages, Manage tasks and lead members | 10/10         | 10/10         | 10/10      | 10/10         |
-| Khai         | Homepage.js, History.js, Login/Signup.js  | 10/10         | 9.5/10        | 10/10      | 10/10         |
-| Khang        | -                               | 0/10          | 0/10           | 0/10       | 0/10          |
+### `npm test`
 
-## Project Requirement List and Description
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### Overview
-The project is a web app that enables users to:
-- View and trade digital assets, with all data stored in a database.
-- Use search and filter features to find specific assets.
-- Utilize smart contracts as escrow to secure assets during trades until completion or cancellation.
-- Access transaction history to review past trades.
+### `npm run build`
 
-### Workflow
-Our team decided to work in sprints of 7 days with weekly meetings:
-- **a. Weekly meetings**:  
-  Meeting whiteboard for brainstorm, meeting plans and conclusion notes.
-- **b. Code Collaboration**:  
-  GitHub for version control and team collaboration.  
-- **c. Task Assignments**:  
-  Trello for managing tasks and tracking progress.
-- **d. Documentation**:  
-  Google Drive for storing and organizing project documentation. Further formatted using word.
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-# Visit the wiki for more!
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
+
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `npm run eject`
+
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
+
+### Code Splitting
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+
+### Analyzing the Bundle Size
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+
+### Making a Progressive Web App
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+
+### Advanced Configuration
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+
+### Deployment
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
