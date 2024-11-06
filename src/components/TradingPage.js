@@ -8,7 +8,7 @@ import {
   Box,
   Grid2,
   Slider,
-  InputAdornment,
+  InputAdornment, 
   Snackbar,
   Alert,
   Table,
@@ -22,8 +22,10 @@ import {
 } from "@mui/material";
 import Footer from "./Footer";
 import { useAuth } from '../context/AuthContext'; // Import the useAuth hook
+import simpleStorage from "../script/simpleStorage"; // Import the smart contract instance
+import web3 from "../script/web3"; // Import web3 for interacting with the blockchain
 
-//Data for the coins
+// Data for the coins
 export const coinOptions = [
   {
     name: "Bitcoin",
@@ -77,7 +79,7 @@ export const coinOptions = [
   },
 ];
 
-//Data for history
+// Data for history
 export const historyData = [
   {
     id: 1,
@@ -116,158 +118,85 @@ export const historyData = [
 const TradingPage = () => {
   // State for Buy Section
   const [buyCoinAmount, setBuyCoinAmount] = useState(0.001);
-  const [buyCoinPrice, setBuyCoinPrice] = useState(""); // State for the selected coin price
+  const [buyCoinPrice, setBuyCoinPrice] = useState("");
 
   // State for Sell Section
   const [sellCoinAmount, setSellCoinAmount] = useState(0.001);
-  const [sellCoinPrice, setSellCoinPrice] = useState(""); // State for the selected coin price
+  const [sellCoinPrice, setSellCoinPrice] = useState("");
 
   // State for Buy and Sell Coin Selection
   const [buyCoin, setBuyCoin] = useState("");
   const [sellCoin, setSellCoin] = useState("");
+
+  // State for smart contract interactions
+  const [contractValue, setContractValue] = useState("");
+  const [storedValue, setStoredValue] = useState(null);
 
   // Calculate Total Price for Buy and Sell Sections
   const buyTotalPrice = buyCoinAmount * buyCoinPrice;
   const sellTotalPrice = sellCoinAmount * sellCoinPrice;
 
   // Auth context to check if the user is logged in
-  const { user } = useAuth(); // Destructure the user from the AuthContext 
-
-  // Handlers for Buy Section Slider
-  const handleBuySliderChange = (event, newValue) => {
-    setBuyCoinAmount(newValue);
-  };
-
-  const handleBuyInputChange = (event) => {
-    setBuyCoinAmount(
-      event.target.value === "" ? "" : Number(event.target.value)
-    );
-  };
-
-  const handleBuyPriceChange = (event) => {
-    setBuyCoinPrice(
-      event.target.value === "" ? "" : Number(event.target.value)
-    );
-  };
-  //Sell coin options
-  const coinOption = coinOptions.map((coin) => (
-    <MenuItem key={coin.name} value={coin.value}>
-      <img
-        src={coin.image}
-        alt={coin.name}
-        style={{
-          width: 24,
-          height: 24,
-          marginRight: 10,
-          verticalAlign: "middle",
-        }}
-      />
-      {coin.name}
-    </MenuItem>
-  ));
-
-  // Handlers for Sell Section Slider
-  const handleSellSliderChange = (event, newValue) => {
-    setSellCoinAmount(newValue);
-  };
-
-  const handleSellInputChange = (event) => {
-    setSellCoinAmount(
-      event.target.value === "" ? "" : Number(event.target.value)
-    );
-  };
-
-  const handleSellPriceChange = (event) => {
-    setSellCoinPrice(
-      event.target.value === "" ? "" : Number(event.target.value)
-    );
-  };
-
-  const formatCoinAmount = (value) => {
-    return `${value}`;
-  };
+  const { user } = useAuth();
 
   // Snackbar state for popup
   const [popup, setPopup] = useState({ open: false, message: "", type: "" });
 
-    // Handle Buy Button Click
-    const handleBuyClick = () => {
-        // Close the popup first if already open, then trigger a new one
-        if (!user) { // If the user is not logged in
-            setTimeout(() => {
-                setPopup({ open: true, message: 'Error: You must log in first!', type: 'error' });
-            }, 0);     
-        }
-        else if (validateBuyForm()) {
-            setTimeout(() => {
-                setPopup({ open: true, message: 'Purchased', type: 'success' });
-            }, 0);            
-        } else {
-            setTimeout(() => {
-                setPopup({ open: true, message: 'Error: Select a coin and enter a valid price!', type: 'error' });
-            }, 0);  
-        }
-    };
-
-    // Handle Sell Button Click
-    const handleSellClick = () => {
-        // Close the popup first if already open, then trigger a new one
-        setPopup({ open: false, message: '', type: '' });
-
-        if (!user) { // If the user is not logged in
-            setTimeout(() => {
-                setPopup({ open: true, message: 'Error: You must log in first!', type: 'error' });
-            }, 0);     
-        }
-        else if (validateSellForm()) {
-            setTimeout(() => {
-                setPopup({ open: true, message: 'Sold', type: 'success' });
-            }, 0);
-        } else {
-            setTimeout(() => {
-                setPopup({ open: true, message: 'Error: Select a coin and enter a valid price!', type: 'error' });
-            }, 0);        
-        }
-    };
-
-  // Close Snackbar
-  const handleClosePopup = () => {
-    setPopup({ open: false, message: "", type: "" });
+  // Smart contract interaction handlers
+  const setValueInContract = async () => {
+    if (!simpleStorage) {
+      console.error("Smart contract is not initialized.");
+      return;
+    }
+    if (user && contractValue) {
+      try {
+        const accounts = await web3.eth.getAccounts();
+        await simpleStorage.methods.set(contractValue).send({ from: accounts[0] });
+        setPopup({ open: true, message: "Value set in contract", type: "success" });
+      } catch (error) {
+        setPopup({ open: true, message: `Error: ${error.message}`, type: "error" });
+      }
+    } else {
+      setPopup({ open: true, message: "Log in and enter a value", type: "error" });
+    }
   };
 
-  // Handlers for Buy Section
-  const handleBuyCoinChange = (event) => {
-    setBuyCoin(event.target.value);
+  const getValueFromContract = async () => {
+    if (!simpleStorage) {
+      console.error("Smart contract is not initialized.");
+      return;
+    }
+    try {
+      const result = await simpleStorage.methods.get().call();
+      setStoredValue(result);
+    } catch (error) {
+      setPopup({ open: true, message: `Error: ${error.message}`, type: "error" });
+    }
   };
 
-  // Handlers for Sell Section
-  const handleSellCoinChange = (event) => {
-    setSellCoin(event.target.value);
-  };
+  // Handlers for Buy and Sell Section
+  const handleBuySliderChange = (event, newValue) => setBuyCoinAmount(newValue);
+  const handleBuyInputChange = (event) => setBuyCoinAmount(event.target.value === "" ? "" : Number(event.target.value));
+  const handleBuyPriceChange = (event) => setBuyCoinPrice(event.target.value === "" ? "" : Number(event.target.value));
+  const handleSellSliderChange = (event, newValue) => setSellCoinAmount(newValue);
+  const handleSellInputChange = (event) => setSellCoinAmount(event.target.value === "" ? "" : Number(event.target.value));
+  const handleSellPriceChange = (event) => setSellCoinPrice(event.target.value === "" ? "" : Number(event.target.value));
 
   // Validate forms
-  const validateBuyForm = () => {
-    if (!buyCoin || buyCoinPrice <= 0 || isNaN(buyCoinPrice)) {
-      return false;
-    }
-    return true;
-  };
+  const validateBuyForm = () => buyCoin && buyCoinPrice > 0 && !isNaN(buyCoinPrice);
+  const validateSellForm = () => sellCoin && sellCoinPrice > 0 && !isNaN(sellCoinPrice);
 
-  const validateSellForm = () => {
-    if (!sellCoin || sellCoinPrice <= 0 || isNaN(sellCoinPrice)) {
-      return false;
-    }
-    return true;
-  };
+  // Close Snackbar
+  const handleClosePopup = () => setPopup({ open: false, message: "", type: "" });
 
   return (
     <>
       <NavBar />
       <Box
         sx={{
-          justifyContent: "center", // Centers content horizontally
-          alignItems: "center", // Centers content vertically
-          textAlign: "center", // Ensures text is centered within the Typography
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
           height: "15vh",
           backgroundColor: "#6f3bff",
           color: "#faf8f7",
@@ -282,11 +211,12 @@ const TradingPage = () => {
           </Typography>
         </Box>
       </Box>
+      
+      {/* Buy and Sell Section */}
       <Box className="buy-sell-container">
         {/* Buy Section */}
-
         <Box className="buy-sell-box">
-          {/* Row for Select Coin and Price Input */}
+          {/* Select Coin and Price Input */}
           <Grid2 className="buy-sell-grid">
             <Grid2>
               <TextField
@@ -296,10 +226,14 @@ const TradingPage = () => {
                 fullWidth
                 margin="normal"
                 value={buyCoin}
-                onChange={handleBuyCoinChange}
-                className="white-background-textfield"
+                onChange={(e) => setBuyCoin(e.target.value)}
               >
-                {coinOption}
+                {coinOptions.map((coin) => (
+                  <MenuItem key={coin.name} value={coin.value}>
+                    <img src={coin.image} alt={coin.name} style={{ width: 24, height: 24, marginRight: 10 }} />
+                    {coin.name}
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid2>
             <Grid2>
@@ -314,7 +248,7 @@ const TradingPage = () => {
               />
             </Grid2>
           </Grid2>
-          {/* Number of Coins with Slider for Buy Section */}
+          {/* Amount Slider */}
           <TextField
             label="Amount"
             value={buyCoinAmount}
@@ -322,16 +256,8 @@ const TradingPage = () => {
             fullWidth
             margin="normal"
             InputProps={{
-				readOnly: true,
-              inputProps: {
-                min: 0,
-                step: 0.001,
-              },
-              startAdornment: (
-                <InputAdornment position="start">
-                  <ExchangeIcon />
-                </InputAdornment>
-              ),
+              readOnly: true,
+              startAdornment: <InputAdornment position="start"><ExchangeIcon /></InputAdornment>,
             }}
           />
           <Slider
@@ -341,36 +267,30 @@ const TradingPage = () => {
             step={0.001}
             onChange={handleBuySliderChange}
             valueLabelDisplay="auto"
-            valueLabelFormat={formatCoinAmount}
           />
-
           {/* Total Price Calculation */}
           <TextField
             label="Total"
-            value={buyTotalPrice.toFixed(2)} // Displaying the total price
+            value={buyTotalPrice.toFixed(2)}
             fullWidth
             margin="normal"
             InputProps={{
-              readOnly: true, // Making the field read-only
+              readOnly: true,
               endAdornment: <InputAdornment position="end">USD</InputAdornment>,
             }}
           />
-          <Box className="buy-sell-button">
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              onClick={handleBuyClick}
-            >
-              Buy
-            </Button>
-          </Box>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={() => validateBuyForm() ? setPopup({ open: true, message: "Purchased", type: "success" }) : setPopup({ open: true, message: "Error: Select a coin and enter a valid price!", type: "error" })}
+          >
+            Buy
+          </Button>
         </Box>
 
         {/* Sell Section */}
-
         <Box className="buy-sell-box">
-          {/* Row for Select Coin and Price Input */}
           <Grid2 className="buy-sell-grid">
             <Grid2>
               <TextField
@@ -380,9 +300,14 @@ const TradingPage = () => {
                 fullWidth
                 margin="normal"
                 value={sellCoin}
-                onChange={handleSellCoinChange}
+                onChange={(e) => setSellCoin(e.target.value)}
               >
-                {coinOption}
+                {coinOptions.map((coin) => (
+                  <MenuItem key={coin.name} value={coin.value}>
+                    <img src={coin.image} alt={coin.name} style={{ width: 24, height: 24, marginRight: 10 }} />
+                    {coin.name}
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid2>
             <Grid2>
@@ -397,8 +322,6 @@ const TradingPage = () => {
               />
             </Grid2>
           </Grid2>
-          {/* Number of Coins with Slider for Sell Section */}
-
           <TextField
             label="Amount"
             value={sellCoinAmount}
@@ -406,16 +329,8 @@ const TradingPage = () => {
             fullWidth
             margin="normal"
             InputProps={{
-				readOnly: true,
-              inputProps: {
-                min: 0,
-                step: 0.001,
-              },
-              startAdornment: (
-                <InputAdornment position="start">
-                  <ExchangeIcon />
-                </InputAdornment>
-              ),
+              readOnly: true,
+              startAdornment: <InputAdornment position="start"><ExchangeIcon /></InputAdornment>,
             }}
           />
           <Slider
@@ -425,64 +340,77 @@ const TradingPage = () => {
             step={0.001}
             onChange={handleSellSliderChange}
             valueLabelDisplay="auto"
-            valueLabelFormat={formatCoinAmount}
           />
-
-          {/* Total Price Calculation */}
           <TextField
             label="Total"
-            value={sellTotalPrice.toFixed(2)} // Displaying the total price
+            value={sellTotalPrice.toFixed(2)}
             fullWidth
             margin="normal"
             InputProps={{
-              readOnly: true, // Making the field read-only
+              readOnly: true,
               endAdornment: <InputAdornment position="end">USD</InputAdornment>,
             }}
           />
-          <Box className="buy-sell-button">
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              onClick={handleSellClick}
-            >
-              Sell
-            </Button>
-          </Box>
-        </Box>
-
-        {/* Snackbar for Popup */}
-        <Snackbar
-          open={popup.open}
-          autoHideDuration={3000}
-          onClose={handleClosePopup}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert
-            severity={popup.type}
-            sx={{
-              width: "100%",
-            }}
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={() => validateSellForm() ? setPopup({ open: true, message: "Sold", type: "success" }) : setPopup({ open: true, message: "Error: Select a coin and enter a valid price!", type: "error" })}
           >
-            {popup.message}
-          </Alert>
-        </Snackbar>
+            Sell
+          </Button>
+        </Box>
       </Box>
-      {/* History Table */}
 
+      {/* Smart Contract Interaction */}
+      <Box sx={{ textAlign: "center", marginTop: "20px" }}>
+        <Typography variant="h5">Smart Contract Interaction</Typography>
+        <TextField
+          label="Set Contract Value"
+          variant="outlined"
+          value={contractValue}
+          onChange={(e) => setContractValue(e.target.value)}
+          fullWidth
+          margin="normal"
+        />
+        <Button variant="contained" color="primary" onClick={setValueInContract} sx={{ marginRight: "10px" }}>
+          Set Value
+        </Button>
+        <Button variant="outlined" color="secondary" onClick={getValueFromContract}>
+          Get Value
+        </Button>
+        {storedValue !== null && (
+          <Typography variant="body1" sx={{ marginTop: "10px" }}>
+            Stored Value: {storedValue}
+          </Typography>
+        )}
+      </Box>
+
+      {/* Snackbar for Popup */}
+      <Snackbar
+        open={popup.open}
+        autoHideDuration={3000}
+        onClose={handleClosePopup}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity={popup.type} sx={{ width: "100%" }}>
+          {popup.message}
+        </Alert>
+      </Snackbar>
+
+      {/* History Table */}
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column", // Stack Typography and Table vertically
-          alignItems: "center", // Centers both Typography and Table horizontally
+          flexDirection: "column",
+          alignItems: "center",
           marginTop: "20px",
-          width: "100%", // Ensures it spans the full width
+          width: "100%",
         }}
       >
         <Typography variant="h1" paddingTop={2} gutterBottom>
           History
         </Typography>
-        {/* Centered Table */}
         <TableContainer
           component={Paper}
           sx={{
@@ -515,6 +443,7 @@ const TradingPage = () => {
           </Table>
         </TableContainer>
       </Box>
+
       <Footer />
     </>
   );

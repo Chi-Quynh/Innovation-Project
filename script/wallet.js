@@ -25,7 +25,26 @@ const generatePrivateKey = () => {
   return privateKey.toString(16);
 };
 
+//Function to verify if a private key is valid
+exports.verifyPrivateKey = (privateKey) =>{
+  try{
+    const key = ec.keyFromPrivate(privateKey, "hex");
+    const publicKey = key.getPublic().encode("hex");
+    return {
+      valid: true,
+      message: "The private key is valid",
+      publicKey: publicKey,
+    };
+  } catch(error){
+    return{
+      valid: false,
+      message: "The private key is invalid",
+      error: error.message
+    };
+  }
+}; 
+
 //test working
 let wallet = this;
 let reVal = wallet.initWallet();
-console.log(JSON.stringify(reVal));
+console.log("Wallet Info:", JSON.stringify(reVal));
