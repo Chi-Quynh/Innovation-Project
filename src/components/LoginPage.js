@@ -7,10 +7,10 @@ import {
   Link as MuiLink,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../script/auth";
 import NavBar from "../components/Navbar";
-import SignupImg from "../images/2363386.jpg"; //Import image from the images 
-import Footer from "./Footer"
+import SignupImg from "../images/2363386.jpg"; //Import image from the images
+import Footer from "./Footer";
 
 const LoginPage = () => {
   const [email, setEmail] = useState(""); // Use email instead of username

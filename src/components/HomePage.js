@@ -16,94 +16,12 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import NavBar from "./Navbar"; // Import the NavBar component
-import Footer from "./Footer"
-
+import Footer from "./Footer";
+import server from "../script/server"; // Import the server object
 // Your crypto data is here in the same file
-const data = [
-  {
-    name: "Bitcoin",
-    price: "$44,000",
-    change: "+2%",
-    marketCap: "$800B",
-    category: "Layer 1",
-    image: "https://cryptologos.cc/logos/bitcoin-btc-logo.png", // Correct image URL for Bitcoin
-  },
-  {
-    name: "Ethereum",
-    price: "$3,000",
-    change: "-1%",
-    marketCap: "$350B",
-    category: "Layer 2",
-    image: "https://cryptologos.cc/logos/ethereum-eth-logo.png", // Correct image URL for Ethereum
-  },
-  {
-    name: "Solana",
-    price: "$150",
-    change: "+5%",
-    marketCap: "$45B",
-    category: "Layer 1",
-    image: "https://cryptologos.cc/logos/solana-sol-logo.png", // Correct image URL for Solana
-  },
-  {
-    name: "Polkadot",
-    price: "$28",
-    change: "-3%",
-    marketCap: "$30B",
-    category: "Layer 0",
-    image: "https://cryptologos.cc/logos/polkadot-new-dot-logo.png?v=022", // Polkadot Logo
-  },
-  {
-    name: "Chainlink",
-    price: "$24",
-    change: "+1%",
-    marketCap: "$10B",
-    category: "Oracles",
-    image: "https://cryptologos.cc/logos/chainlink-link-logo.png?v=022", // Chainlink Logo
-  },
-  {
-    name: "Avalanche",
-    price: "$65",
-    change: "+7%",
-    marketCap: "$20B",
-    category: "Layer 1",
-    image: "https://cryptologos.cc/logos/avalanche-avax-logo.png?v=022", // Avalanche Logo
-  },
-  {
-    name: "Uniswap",
-    price: "$25",
-    change: "-4%",
-    marketCap: "$15B",
-    category: "DeFi",
-    image: "https://cryptologos.cc/logos/uniswap-uni-logo.png?v=022", // Uniswap Logo
-  },
-  {
-    name: "Aave",
-    price: "$320",
-    change: "+3%",
-    marketCap: "$5B",
-    category: "DeFi",
-    image: "https://cryptologos.cc/logos/aave-aave-logo.png?v=022", // Aave Logo
-  },
-  {
-    name: "Polygon",
-    price: "$1.50",
-    change: "+8%",
-    marketCap: "$12B",
-    category: "Layer 2",
-    image: "https://cryptologos.cc/logos/polygon-matic-logo.png?v=022", // Polygon (Matic) Logo
-  },
-  {
-    name: "Cosmos",
-    price: "$35",
-    change: "-2%",
-    marketCap: "$8B",
-    category: "Interoperability",
-    image: "https://cryptologos.cc/logos/cosmos-atom-logo.png?v=022", // Cosmos Logo
-  },
-  // Add more assets with their images...
-];
 
 const HomePage = () => {
+  const data = server.getData("Tokens"); // Fetch data from the server
   const [searchTerm, setSearchTerm] = useState("");
   const [assetCategory, setAssetCategory] = useState("");
   const [filteredAssets, setFilteredAssets] = useState(data);
@@ -131,9 +49,11 @@ const HomePage = () => {
   return (
     <>
       <NavBar />
-       <Box sx={{
-        minHeight: '100vH', //quick fix for the footer stay in the middle of the page, side effect unnecessary blank space
-        }}> 
+      <Box
+        sx={{
+          minHeight: "100vH", //quick fix for the footer stay in the middle of the page, side effect unnecessary blank space
+        }}
+      >
         <Box
           sx={{
             marginTop: "20px",
