@@ -116,6 +116,10 @@ export const historyData = [
 ];
 
 const TradingPage = () => {
+
+  const [transactionHistory, setTransactionHistory] = useState([]);
+
+
   // State for Buy Section
   const [buyCoinAmount, setBuyCoinAmount] = useState(0.001);
   const [buyCoinPrice, setBuyCoinPrice] = useState("");
@@ -142,6 +146,26 @@ const TradingPage = () => {
   // Snackbar state for popup
   const [popup, setPopup] = useState({ open: false, message: "", type: "" });
 
+    // Function to fetch transaction history from the smart contract
+    const fetchTransactionHistory = async () => {
+      if (!simpleStorage) {
+        console.error("Smart contract is not initialized.");
+        return;
+      }
+      try {
+        // Call the smart contract method to get transaction history
+        const history = await simpleStorage.methods.getTransactionHistory().call();
+        setTransactionHistory(history); // Update the state with fetched data
+      } catch (error) {
+        console.error("Error fetching transaction history:", error);
+      }
+    }
+    
+    // UseEffect to fetch history when the component mounts
+  useEffect(() => {
+    fetchTransactionHistory();
+  }, []);
+  
   // Smart contract interaction handlers
   const setValueInContract = async () => {
     if (!simpleStorage) {
@@ -160,6 +184,47 @@ const TradingPage = () => {
       setPopup({ open: true, message: "Log in and enter a value", type: "error" });
     }
   };
+
+  const handleBuyTransaction = async () => {
+    if (!simpleStorage) {
+      console.error("Smart contract is not initialized.");
+      return;
+    }
+    if (!buyCoin || !buyCoinPrice || !buyCoinAmount) {
+      setPopup({ open: true, message: "Please select a coin and enter valid values", type: "error" });
+      return;
+    }
+    try {
+      const accounts = await web3.eth.getAccounts();
+      await simpleStorage.methods
+        .set(buyCoinAmount)
+        .send({ from: accounts[0] });
+      setPopup({ open: true, message: `Successfully bought ${buyCoinAmount} of ${buyCoin}`, type: "success" });
+    } catch (error) {
+      setPopup({ open: true, message: `Error: ${error.message}`, type: "error" });
+    }
+  };
+
+  const handleSellTransaction = async () => {
+    if (!simpleStorage) {
+      console.error("Smart contract is not initialized.");
+      return;
+    }
+    if (!sellCoin || !sellCoinPrice || !sellCoinAmount) {
+      setPopup({ open: true, message: "Please select a coin and enter valid values", type: "error" });
+      return;
+    }
+    try {
+      const accounts = await web3.eth.getAccounts();
+      await simpleStorage.methods
+        .set(sellCoinAmount) 
+        .send({ from: accounts[0] });
+      setPopup({ open: true, message: `Successfully sold ${sellCoinAmount} of ${sellCoin}`, type: "success" });
+    } catch (error) {
+      setPopup({ open: true, message: `Error: ${error.message}`, type: "error" });
+    }
+  };
+  
 
   const getValueFromContract = async () => {
     if (!simpleStorage) {
@@ -215,79 +280,154 @@ const TradingPage = () => {
       {/* Buy and Sell Section */}
       <Box className="buy-sell-container">
         {/* Buy Section */}
-        <Box className="buy-sell-box">
-          {/* Select Coin and Price Input */}
-          <Grid2 className="buy-sell-grid">
-            <Grid2>
-              <TextField
-                select
-                label="Type"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={buyCoin}
-                onChange={(e) => setBuyCoin(e.target.value)}
-              >
-                {coinOptions.map((coin) => (
-                  <MenuItem key={coin.name} value={coin.value}>
-                    <img src={coin.image} alt={coin.name} style={{ width: 24, height: 24, marginRight: 10 }} />
-                    {coin.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid2>
-            <Grid2>
-              <TextField
-                label="Price"
-                type="number"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={buyCoinPrice}
-                onChange={handleBuyPriceChange}
-              />
-            </Grid2>
-          </Grid2>
-          {/* Amount Slider */}
-          <TextField
-            label="Amount"
-            value={buyCoinAmount}
-            onChange={handleBuyInputChange}
-            fullWidth
-            margin="normal"
-            InputProps={{
-              readOnly: true,
-              startAdornment: <InputAdornment position="start"><ExchangeIcon /></InputAdornment>,
-            }}
-          />
-          <Slider
-            value={buyCoinAmount}
-            min={0.001}
-            max={1}
-            step={0.001}
-            onChange={handleBuySliderChange}
-            valueLabelDisplay="auto"
-          />
-          {/* Total Price Calculation */}
-          <TextField
-            label="Total"
-            value={buyTotalPrice.toFixed(2)}
-            fullWidth
-            margin="normal"
-            InputProps={{
-              readOnly: true,
-              endAdornment: <InputAdornment position="end">USD</InputAdornment>,
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={() => validateBuyForm() ? setPopup({ open: true, message: "Purchased", type: "success" }) : setPopup({ open: true, message: "Error: Select a coin and enter a valid price!", type: "error" })}
-          >
-            Buy
-          </Button>
-        </Box>
+        {/* Buy Section */}
+<Box className="buy-sell-box">
+  {/* Select Coin and Price Input */}
+  <Grid2 className="buy-sell-grid">
+    <Grid2>
+      <TextField
+        select
+        label="Type"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        value={buyCoin}
+        onChange={(e) => setBuyCoin(e.target.value)}
+      >
+        {coinOptions.map((coin) => (
+          <MenuItem key={coin.name} value={coin.value}>
+            <img src={coin.image} alt={coin.name} style={{ width: 24, height: 24, marginRight: 10 }} />
+            {coin.name}
+          </MenuItem>
+        ))}
+      </TextField>
+    </Grid2>
+    <Grid2>
+      <TextField
+        label="Price"
+        type="number"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        value={buyCoinPrice}
+        onChange={(e) => setBuyCoinPrice(e.target.value)}
+      />
+    </Grid2>
+  </Grid2>
+  {/* Amount Slider */}
+  <TextField
+    label="Amount"
+    value={buyCoinAmount}
+    onChange={(e) => setBuyCoinAmount(e.target.value)}
+    fullWidth
+    margin="normal"
+    InputProps={{
+      readOnly: true,
+      startAdornment: <InputAdornment position="start"><ExchangeIcon /></InputAdornment>,
+    }}
+  />
+  <Slider
+    value={buyCoinAmount}
+    min={0.001}
+    max={1}
+    step={0.001}
+    onChange={(e, newValue) => setBuyCoinAmount(newValue)}
+    valueLabelDisplay="auto"
+  />
+  {/* Total Price Calculation */}
+  <TextField
+    label="Total"
+    value={buyTotalPrice.toFixed(2)}
+    fullWidth
+    margin="normal"
+    InputProps={{
+      readOnly: true,
+      endAdornment: <InputAdornment position="end">USD</InputAdornment>,
+    }}
+  />
+  <Button
+    variant="contained"
+    color="primary"
+    fullWidth
+    onClick={handleBuyTransaction} // Trigger smart contract interaction
+  >
+    Buy
+  </Button>
+</Box>
+
+{/* Sell Section */}
+<Box className="buy-sell-box">
+  {/* Select Coin and Price Input */}
+  <Grid2 className="buy-sell-grid">
+    <Grid2>
+      <TextField
+        select
+        label="Type"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        value={sellCoin}
+        onChange={(e) => setSellCoin(e.target.value)}
+      >
+        {coinOptions.map((coin) => (
+          <MenuItem key={coin.name} value={coin.value}>
+            <img src={coin.image} alt={coin.name} style={{ width: 24, height: 24, marginRight: 10 }} />
+            {coin.name}
+          </MenuItem>
+        ))}
+      </TextField>
+    </Grid2>
+    <Grid2>
+      <TextField
+        label="Price"
+        type="number"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        value={sellCoinPrice}
+        onChange={(e) => setSellCoinPrice(e.target.value)}
+      />
+    </Grid2>
+  </Grid2>
+  <TextField
+    label="Amount"
+    value={sellCoinAmount}
+    onChange={(e) => setSellCoinAmount(e.target.value)}
+    fullWidth
+    margin="normal"
+    InputProps={{
+      readOnly: true,
+      startAdornment: <InputAdornment position="start"><ExchangeIcon /></InputAdornment>,
+    }}
+  />
+  <Slider
+    value={sellCoinAmount}
+    min={0.001}
+    max={1}
+    step={0.001}
+    onChange={(e, newValue) => setSellCoinAmount(newValue)}
+    valueLabelDisplay="auto"
+  />
+  <TextField
+    label="Total"
+    value={sellTotalPrice.toFixed(2)}
+    fullWidth
+    margin="normal"
+    InputProps={{
+      readOnly: true,
+      endAdornment: <InputAdornment position="end">USD</InputAdornment>,
+    }}
+  />
+  <Button
+    variant="contained"
+    color="primary"
+    fullWidth
+    onClick={handleSellTransaction} // Trigger smart contract interaction
+  >
+    Sell
+  </Button>
+</Box>
+
 
         {/* Sell Section */}
         <Box className="buy-sell-box">
@@ -355,7 +495,7 @@ const TradingPage = () => {
             variant="contained"
             color="primary"
             fullWidth
-            onClick={() => validateSellForm() ? setPopup({ open: true, message: "Sold", type: "success" }) : setPopup({ open: true, message: "Error: Select a coin and enter a valid price!", type: "error" })}
+            onClick={handleSellTransaction}
           >
             Sell
           </Button>
@@ -430,15 +570,23 @@ const TradingPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {historyData.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.type}</TableCell>
-                  <TableCell>{row.from}</TableCell>
-                  <TableCell>{row.to}</TableCell>
-                  <TableCell>{row.amount} BTC</TableCell>
-                  <TableCell>{row.date}</TableCell>
+              {transactionHistory.length > 0 ? (
+                transactionHistory.map((row, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{row.type}</TableCell>
+                    <TableCell>{row.from}</TableCell>
+                    <TableCell>{row.to}</TableCell>
+                    <TableCell>{row.amount}</TableCell>
+                    <TableCell>{new Date(row.date * 1000).toLocaleString()}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    No transactions found.
+                  </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </TableContainer>
