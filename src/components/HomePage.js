@@ -51,8 +51,8 @@ const HomePage = () => {
   const filterAssets = (searchTerm, assetCategory) => {
     return allAssets.filter(
       (asset) =>
-        asset.token_category.toLowerCase().includes(assetCategory.toLowerCase()) &&
-        asset.token_name.toLowerCase().includes(searchTerm.toLowerCase())
+        asset.category.toLowerCase().includes(assetCategory.toLowerCase()) &&
+        asset.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
@@ -155,13 +155,13 @@ const HomePage = () => {
             <TableBody>
               {filteredAssets.length > 0 ? (
                 filteredAssets.map((row) => (
-                  <TableRow key={row.token_name}>
+                  <TableRow key={row.name}>
                     <TableCell>
                       {/* Image + Name */}
                       <Box sx={{ display: "flex", alignItems: "center" }}>
                         <img
-                          src={row.token_image}
-                          alt={row.token_name}
+                          src={row.image}
+                          alt={row.name}
                           style={{
                             width: "30px",
                             height: "30px",
@@ -173,18 +173,18 @@ const HomePage = () => {
                             e.target.src = "https://via.placeholder.com/30"; // Fallback image if the URL is broken
                           }}
                         />
-                        <Box style={{ marginLeft: "2em" }}>{row.token_name}</Box>
+                        <Box style={{ marginLeft: "2em" }}>{row.name}</Box>
                       </Box>
                     </TableCell>
-                    <TableCell>${row.token_price}</TableCell>
+                    <TableCell>${row.price}</TableCell>
                     <TableCell
                       sx={{
-                        color: row.token_day_change >= 0 ? "green" : "red",
+                        color: row.change >= 0 ? "green" : "red",
                       }}
                     >
-                      {row.token_day_change >= 0 ? `+${row.token_day_change}` : row.token_day_change}%
+                      {row.change >= 0 ? `+${row.change}` : row.change}%
                     </TableCell>
-                    <TableCell>{formatMarketCap(row.token_market_cap)}</TableCell>
+                    <TableCell>{formatMarketCap(row.marketCap)}</TableCell>
                     <TableCell>
                       <Button
                         component={Link}

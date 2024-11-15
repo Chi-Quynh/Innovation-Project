@@ -7,8 +7,6 @@ import {
   MenuItem,
   Box,
   Grid2,
-  Slider,
-  InputAdornment,
   Snackbar,
   Alert,
   Table,
@@ -29,51 +27,61 @@ export const coinOptions = [
     name: "Bitcoin",
     value: "BTC",
     image: "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
+    price: 39820.65, // example price
   },
   {
     name: "Ethereum",
     value: "ETH",
     image: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
+    price: 2743.12, // example price
   },
   {
     name: "Solana",
     value: "SOL",
     image: "https://cryptologos.cc/logos/solana-sol-logo.png",
+    price: 148.57, // example price
   },
   {
     name: "Polkadot",
     value: "DOT",
     image: "https://cryptologos.cc/logos/polkadot-new-dot-logo.png?v=022",
+    price: 27.43, // example price
   },
   {
     name: "Chainlink",
     value: "LINK",
     image: "https://cryptologos.cc/logos/chainlink-link-logo.png?v=022",
+    price: 23.89, // example price
   },
   {
     name: "Avalanche",
     value: "AVAX",
     image: "https://cryptologos.cc/logos/avalanche-avax-logo.png?v=022",
+    price: 64.72, // example price
   },
   {
     name: "Uniswap",
     value: "UNI",
     image: "https://cryptologos.cc/logos/uniswap-uni-logo.png?v=022",
+    price: 25.89, // example price
   },
   {
     name: "Aave",
     value: "AAVE",
     image: "https://cryptologos.cc/logos/aave-aave-logo.png?v=022",
+    price: 319.78, // example price
   },
   {
     name: "Polygon",
     value: "MATIC",
     image: "https://cryptologos.cc/logos/polygon-matic-logo.png?v=022",
+    price: 1.47, // example price
   },
   {
     name: "Cosmos",
     value: "ATOM",
     image: "https://cryptologos.cc/logos/cosmos-atom-logo.png?v=022",
+    price: 34.87, // example price
   },
 ];
 
@@ -115,40 +123,40 @@ export const historyData = [
 
 const TradingPage = () => {
   // State for Buy Section
-  const [buyCoinAmount, setBuyCoinAmount] = useState(0.001);
-  const [buyCoinPrice, setBuyCoinPrice] = useState(""); // State for the selected coin price
+  const [buyCoinAmount, setBuyCoinAmount] = useState("0.00");
 
   // State for Sell Section
-  const [sellCoinAmount, setSellCoinAmount] = useState(0.001);
+  const [sellCoinAmount, setSellCoinAmount] = useState("0.00");
   const [sellCoinPrice, setSellCoinPrice] = useState(""); // State for the selected coin price
 
   // State for Buy and Sell Coin Selection
-  const [buyCoin, setBuyCoin] = useState("");
-  const [sellCoin, setSellCoin] = useState("");
+  const [buyCoinSource, setBuyCoinSource] = useState("");
+  const [buyCoinDestination, setBuyCoinDestination] = useState("");
 
-  // Calculate Total Price for Buy and Sell Sections
-  const buyTotalPrice = buyCoinAmount * buyCoinPrice;
-  const sellTotalPrice = sellCoinAmount * sellCoinPrice;
+  const [sellCoinSource, setSellCoinSource] = useState("");
+  const [sellCoinDestination, setSellCoinDestination] = useState("");
 
   // Auth context to check if the user is logged in
   const { user } = useAuth(); // Destructure the user from the AuthContext 
 
-  // Handlers for Buy Section Slider
-  const handleBuySliderChange = (event, newValue) => {
-    setBuyCoinAmount(newValue);
+  // Helper function to get the coin price based on coin value
+  const getCoinPrice = (coinValue) => {
+    const coin = coinOptions.find((c) => c.value === coinValue);
+    return coin ? coin.price : 0;
   };
 
-  const handleBuyInputChange = (event) => {
+  const handleBuyAmountChange = (event) => {
     setBuyCoinAmount(
       event.target.value === "" ? "" : Number(event.target.value)
     );
   };
 
-  const handleBuyPriceChange = (event) => {
-    setBuyCoinPrice(
+  const handleSellAmountChange = (event) => {
+    setSellCoinAmount(
       event.target.value === "" ? "" : Number(event.target.value)
     );
   };
+
   //Sell coin options
   const coinOption = coinOptions.map((coin) => (
     <MenuItem key={coin.name} value={coin.value}>
@@ -166,48 +174,24 @@ const TradingPage = () => {
     </MenuItem>
   ));
 
-  // Handlers for Sell Section Slider
-  const handleSellSliderChange = (event, newValue) => {
-    setSellCoinAmount(newValue);
+  // Handle Buy Button Click
+  const handleBuyClick = () => {
+      // Close the popup first if already open, then trigger a new one
+      if (!user) { // If the user is not logged in
+          setTimeout(() => {
+              setPopup({ open: true, message: 'Error: You must log in first!', type: 'error' });
+          }, 0);     
+      }
+      else if (validateBuyForm()) {
+          setTimeout(() => {
+              setPopup({ open: true, message: 'Purchased', type: 'success' });
+          }, 0);            
+      } else {
+          setTimeout(() => {
+              setPopup({ open: true, message: 'Error: Select a coin and enter a valid price!', type: 'error' });
+          }, 0);  
+      }
   };
-
-  const handleSellInputChange = (event) => {
-    setSellCoinAmount(
-      event.target.value === "" ? "" : Number(event.target.value)
-    );
-  };
-
-  const handleSellPriceChange = (event) => {
-    setSellCoinPrice(
-      event.target.value === "" ? "" : Number(event.target.value)
-    );
-  };
-
-  const formatCoinAmount = (value) => {
-    return `${value}`;
-  };
-
-  // Snackbar state for popup
-  const [popup, setPopup] = useState({ open: false, message: "", type: "" });
-
-    // Handle Buy Button Click
-    const handleBuyClick = () => {
-        // Close the popup first if already open, then trigger a new one
-        if (!user) { // If the user is not logged in
-            setTimeout(() => {
-                setPopup({ open: true, message: 'Error: You must log in first!', type: 'error' });
-            }, 0);     
-        }
-        else if (validateBuyForm()) {
-            setTimeout(() => {
-                setPopup({ open: true, message: 'Purchased', type: 'success' });
-            }, 0);            
-        } else {
-            setTimeout(() => {
-                setPopup({ open: true, message: 'Error: Select a coin and enter a valid price!', type: 'error' });
-            }, 0);  
-        }
-    };
 
     // Handle Sell Button Click
     const handleSellClick = () => {
@@ -230,31 +214,50 @@ const TradingPage = () => {
         }
     };
 
+  // Snackbar state for popup
+  const [popup, setPopup] = useState({ open: false, message: "", type: "" });
+
   // Close Snackbar
   const handleClosePopup = () => {
     setPopup({ open: false, message: "", type: "" });
   };
 
   // Handlers for Buy Section
-  const handleBuyCoinChange = (event) => {
-    setBuyCoin(event.target.value);
+  const handleBuyCoinSourceChange = (event) => {
+    setBuyCoinSource(event.target.value);
   };
 
   // Handlers for Sell Section
-  const handleSellCoinChange = (event) => {
-    setSellCoin(event.target.value);
+  const handleSellCoinSourceChange = (event) => {
+    setSellCoinSource(event.target.value);
   };
+
+  // Handlers for Buy Section
+  const handleBuyCoinDestinationChange = (event) => {
+    setBuyCoinDestination(event.target.value);
+  };
+
+  // Handlers for Sell Section
+  const handleSellCoinDestinationChange = (event) => {
+    setSellCoinDestination(event.target.value);
+  };  
+
+  const buyExchangeRate = buyCoinSource && buyCoinDestination ? getCoinPrice(buyCoinSource) / getCoinPrice(buyCoinDestination) : 0;
+  const sellExchangeRate = sellCoinSource && sellCoinDestination ? getCoinPrice(sellCoinSource) / getCoinPrice(sellCoinDestination) : 0;
+
+  const buyTotalPrice = !isNaN(buyCoinAmount) && buyCoinAmount > 0 ? buyCoinAmount * buyExchangeRate : 0;
+  const sellTotalPrice = !isNaN(sellCoinAmount) && sellCoinAmount > 0  ? sellCoinAmount * sellExchangeRate : 0;
 
   // Validate forms
   const validateBuyForm = () => {
-    if (!buyCoin || buyCoinPrice <= 0 || isNaN(buyCoinPrice)) {
+    if (!buyCoinSource || !buyCoinDestination || buyCoinAmount <= 0 || isNaN(buyCoinAmount)) {
       return false;
     }
     return true;
   };
 
   const validateSellForm = () => {
-    if (!sellCoin || sellCoinPrice <= 0 || isNaN(sellCoinPrice)) {
+    if (!sellCoinSource || !sellCoinDestination || sellCoinAmount <= 0 || isNaN(sellCoinAmount)) {
       return false;
     }
     return true;
@@ -295,8 +298,8 @@ const TradingPage = () => {
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                value={buyCoin}
-                onChange={handleBuyCoinChange}
+                value={buyCoinSource}
+                onChange={handleBuyCoinSourceChange}
                 className="white-background-textfield"
               >
                 {coinOption}
@@ -304,57 +307,46 @@ const TradingPage = () => {
             </Grid2>
             <Grid2>
               <TextField
-                label="Price"
+                label="You'll pay"
                 type="number"
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                value={buyCoinPrice}
-                onChange={handleBuyPriceChange}
+                value={buyCoinAmount}
+                onChange={handleBuyAmountChange}
               />
             </Grid2>
           </Grid2>
-          {/* Number of Coins with Slider for Buy Section */}
-          <TextField
-            label="Amount"
-            value={buyCoinAmount}
-            onChange={handleBuyInputChange}
-            fullWidth
-            margin="normal"
-            InputProps={{
-				readOnly: true,
-              inputProps: {
-                min: 0,
-                step: 0.001,
-              },
-              startAdornment: (
-                <InputAdornment position="start">
-                  <ExchangeIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Slider
-            value={buyCoinAmount}
-            min={0.001}
-            max={1}
-            step={0.001}
-            onChange={handleBuySliderChange}
-            valueLabelDisplay="auto"
-            valueLabelFormat={formatCoinAmount}
-          />
 
-          {/* Total Price Calculation */}
-          <TextField
-            label="Total"
-            value={buyTotalPrice.toFixed(2)} // Displaying the total price
-            fullWidth
-            margin="normal"
-            InputProps={{
-              readOnly: true, // Making the field read-only
-              endAdornment: <InputAdornment position="end">USD</InputAdornment>,
-            }}
-          />
+          <Grid2 className="buy-sell-grid">
+            <Grid2>
+              <TextField
+                  select
+                  label="Type"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  value={buyCoinDestination}
+                  onChange={handleBuyCoinDestinationChange}
+                  className="white-background-textfield"
+                >
+                  {coinOption}
+              </TextField>
+            </Grid2>
+            <Grid2>
+              {/* Total Price Calculation */}
+              <TextField
+                label="You'll receive"
+                value={buyTotalPrice.toFixed(2)} // Displaying the total price
+                fullWidth
+                margin="normal"
+                InputProps={{
+                  readOnly: true, // Making the field read-only
+                }}
+              />
+            </Grid2>
+          </Grid2>
+
           <Box className="buy-sell-button">
             <Button
               variant="contained"
@@ -379,66 +371,54 @@ const TradingPage = () => {
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                value={sellCoin}
-                onChange={handleSellCoinChange}
+                value={sellCoinSource}
+                onChange={handleSellCoinSourceChange}
               >
                 {coinOption}
               </TextField>
             </Grid2>
             <Grid2>
               <TextField
-                label="Price"
+                label="You'll sell"
                 type="number"
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                value={sellCoinPrice}
-                onChange={handleSellPriceChange}
+                value={sellCoinAmount}
+                onChange={handleSellAmountChange}
               />
             </Grid2>
           </Grid2>
-          {/* Number of Coins with Slider for Sell Section */}
 
-          <TextField
-            label="Amount"
-            value={sellCoinAmount}
-            onChange={handleSellInputChange}
-            fullWidth
-            margin="normal"
-            InputProps={{
-				readOnly: true,
-              inputProps: {
-                min: 0,
-                step: 0.001,
-              },
-              startAdornment: (
-                <InputAdornment position="start">
-                  <ExchangeIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Slider
-            value={sellCoinAmount}
-            min={0.001}
-            max={1}
-            step={0.001}
-            onChange={handleSellSliderChange}
-            valueLabelDisplay="auto"
-            valueLabelFormat={formatCoinAmount}
-          />
+          <Grid2 className="buy-sell-grid">
+            <Grid2>
+              <TextField
+                  select
+                  label="Type"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  value={sellCoinDestination}
+                  onChange={handleSellCoinDestinationChange}
+                  className="white-background-textfield"
+                >
+                  {coinOption}
+              </TextField>
+            </Grid2>
+            <Grid2>
+              {/* Total Price Calculation */}
+              <TextField
+                label="You'll receive"
+                value={sellTotalPrice.toFixed(2)} // Displaying the total price
+                fullWidth
+                margin="normal"
+                InputProps={{
+                  readOnly: true, // Making the field read-only
+                }}
+              />
+            </Grid2>
+          </Grid2>
 
-          {/* Total Price Calculation */}
-          <TextField
-            label="Total"
-            value={sellTotalPrice.toFixed(2)} // Displaying the total price
-            fullWidth
-            margin="normal"
-            InputProps={{
-              readOnly: true, // Making the field read-only
-              endAdornment: <InputAdornment position="end">USD</InputAdornment>,
-            }}
-          />
           <Box className="buy-sell-button">
             <Button
               variant="contained"
